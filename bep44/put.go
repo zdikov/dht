@@ -8,7 +8,6 @@ import (
 )
 
 type Put struct {
-	Key  *[sha1.Size]byte
 	V    interface{}
 	K    *[32]byte
 	Salt []byte
@@ -19,7 +18,6 @@ type Put struct {
 
 func (p *Put) ToItem() *Item {
 	i := &Item{
-		Key:  p.Key,
 		V:    p.V,
 		Salt: p.Salt,
 		Sig:  p.Sig,
@@ -37,9 +35,6 @@ func (p *Put) Sign(k ed25519.PrivateKey) {
 }
 
 func (i *Put) Target() Target {
-	if i.Key != nil {
-		return *i.Key
-	}
 	if i.IsMutable() {
 		return MakeMutableTarget(*i.K, i.Salt)
 	} else {

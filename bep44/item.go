@@ -16,9 +16,6 @@ type Item struct {
 	// time when this object was added to storage
 	created time.Time
 
-	// Human-readable key
-	Key *[sha1.Size]byte
-
 	// Value to be stored
 	V interface{}
 
@@ -32,7 +29,6 @@ type Item struct {
 
 func (i *Item) ToPut() Put {
 	p := Put{
-		Key:  i.Key,
 		V:    i.V,
 		Salt: i.Salt,
 		Sig:  i.Sig,
@@ -85,9 +81,6 @@ func NewItem(value interface{}, salt []byte, seq, cas int64, k ed25519.PrivateKe
 }
 
 func (i *Item) Target() Target {
-	if i.Key != nil {
-		return *i.Key
-	}
 	if i.IsMutable() {
 		return sha1.Sum(append(i.K[:], i.Salt...))
 	}
